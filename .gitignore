@@ -1,0 +1,45 @@
+# --- ОС/IDE
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.code-workspace
+
+# --- Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# --- Django
+*.log
+local_settings.py
+db.sqlite3        # если используешь SQLite
+media/            # пользовательские загрузки
+staticfiles/      # или укажи ровно твой STATIC_ROOT
+static_root/
+
+# --- Тесты/линтеры/кэши
+.coverage*
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyrightcache/
+.tox/
+.nox/
+.cache/
+
+# --- Секреты/ключи
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+
+# --- (опционально для фронта)
+node_modules/
