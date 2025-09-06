@@ -1,12 +1,12 @@
-import os, re, unicodedata, json
-from yandex_neural_api.client import YandexNeuralAPIClient
-
-YANDEX_API_KEY = os.getenv("YANDEX_API_KEY")
-FOLDER_ID = os.getenv("FOLDER_ID")
-client = YandexNeuralAPIClient(YANDEX_API_KEY, FOLDER_ID)
+import os
+import re
+import unicodedata
+import json
+import requests  # будем слать запросы к локальному API gpt-oss
 
 FZ_SET = {"44","223","63","135","149"}
-SANITIZE_NO_SYMBOLS = False  # Поставьте True, если в UI запрещены любые символы кроме букв/цифр/пробелов
+SANITIZE_NO_SYMBOLS = False
+
 
 TERMINS = {
     "АС Оператора": "автоматизированная система Оператора",
@@ -108,6 +108,7 @@ def _sanitize_ui(text: str) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
+
 PROMPT_HEADER = """Ты — НОРМАЛИЗАТОР ЗАПРОСОВ для RAG системы сервиса закупок.
 
 КОНТЕКСТ
@@ -130,11 +131,39 @@ PROMPT_HEADER = """Ты — НОРМАЛИЗАТОР ЗАПРОСОВ для RAG
    search_query: <нормализованный запрос>
 """
 
+# --- новый вызов локальной модели ---
+def _call_local_gpt(prompt: str) -> str:
+    """
+    Отправляем промпт в локальный сервер gpt-oss:20b (OpenAI API совместимый).
+    """
+    url = os.getenv("LOCAL_GPT_URL", "http://localhost:6080/v1/chat/completions")
+    model = os.getenv("LOCAL_GPT_MODEL", "gpt-oss-20b")
+
+    try:
+        resp = requests.post(
+            url,
+            headers={"Content-Type": "application/json"},
+            json={
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": "Ты — НОРМАЛИЗАТОР ЗАПРОСОВ."},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.2,
+                "max_tokens": 256,
+            },
+            timeout=60,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return data["choices"][0]["message"]["content"]
+    except Exception as e:
+        return f"search_query: ERROR {e}"
+
+# --- основная функция ---
 def normalise_query(query: str, termins: dict) -> str:
     q0 = normalize_basic(query)
-
     present = _present_terms(q0, termins)
-
     q1 = expand_terms_onepass(q0, present, skip_laws=True)
 
     prompt = (
@@ -146,12 +175,10 @@ def normalise_query(query: str, termins: dict) -> str:
           "Вход:\n<<<USER\n" + q1 + "\nUSER>>>\nВыход:"
     )
 
-    resp = client.generate_text(prompt)
-    text = resp if isinstance(resp, str) else getattr(resp, "text", str(resp))
+    text = _call_local_gpt(prompt)
     out = _clean_llm_output(text)
     out = re.sub(r"\s+", " ", out).strip()
 
-    # фолбэк на пустой ответ
     if not out or out.lower().strip() == "search_query:":
         out = "search_query: " + q1
 
