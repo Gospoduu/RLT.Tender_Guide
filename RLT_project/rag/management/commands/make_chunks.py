@@ -1,15 +1,11 @@
 from django.core.management.base import BaseCommand
-from ...chunking import build_all_chunks, OUT_JSONL
+from ...chunking import build_all_chunks
 
 class Command(BaseCommand):
-    help = "Разбить parsed_data.json на тематические чанки с контекстом"
+    help = "Чанкует parsed_data.json в тематические чанки"
 
-    def add_arguments(self, parser):
-        parser.add_argument("--max-chars", type=int, default=1100)
-        parser.add_argument("--overlap", type=int, default=2)
-
-    def handle(self, *args, **opts):
-        n = build_all_chunks(max_chars=opts["max_chars"], overlap_sentences=opts["overlap"])
+    def handle(self, *args, **kwargs):
+        count, path = build_all_chunks()
         self.stdout.write(self.style.SUCCESS(
-            f"Готово: {n} чанков → {OUT_JSONL}"
+            f"✅ Успешно: создано {count} чанков → {path}"
         ))
