@@ -1,7 +1,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
 import numpy as np
-from normalize_query import normalise_query, TERMINS
+from .normalize_query import normalise_query, TERMINS
 import warnings
 
 # Подавляем предупреждения о неинициализированных весах
