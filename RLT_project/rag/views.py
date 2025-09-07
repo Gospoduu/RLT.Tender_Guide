@@ -52,6 +52,11 @@ def api_ask(request):
             # 4) получаем ответ из RAG пайплайна
             answer = rag_pipeline(question)
 
+            # 4.1) обрезаем всё до "...done thinking" включительно
+            marker = "...done thinking"
+            if marker in answer:
+                answer = answer.split(marker, 1)[1].strip()
+
             # 5) разбираем источники
             sources = []
             if "Источник:" in answer:
