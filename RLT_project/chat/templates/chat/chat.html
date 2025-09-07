@@ -191,13 +191,11 @@ async function send(){
 
   const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
   try{
-    // если уже есть API /api/ask (из RAG), используем его; иначе меняй путь на свой
-    const r = await fetch('/api/ask', {
+    const r = await fetch('https://85.143.167.10:8000/api/ask', {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
-        // сними строку ниже, если у тебя csrf_exempt на вьюхе
-        'X-CSRFToken': getCookie('csrftoken')
+
       },
       body: JSON.stringify({question: text})
     });
