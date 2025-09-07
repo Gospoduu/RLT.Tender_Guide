@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>RLT • Чат</title>
   <style>
-    :root{
+    :root {
       --bg:#1f0056;
       --bg2:#2b007a;
       --card:#ffffff;
@@ -16,22 +16,48 @@
       --bubble:#f7f8fc;
       --radius:16px;
     }
-    html, body {height: 100%; margin: 0;}
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
     body {
       display: flex;
       flex-direction: column;
-      font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      background: linear-gradient(180deg,var(--bg),var(--bg2) 60%,#f3f4f7 60%);
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: linear-gradient(180deg, var(--bg), var(--bg2) 60%, #f3f4f7 60%);
     }
 
-    /* Шапка */
-    .topbar{background:transparent;padding:22px 18px}
-    .brand{max-width:1100px;margin:0 auto;color:#fff;display:flex;align-items:center;gap:16px}
-    .brand__logo{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.15)}
-    .brand__title{font-weight:700;font-size:18px;letter-spacing:.2px}
+    .topbar {
+      background: transparent;
+      padding: 22px 18px;
+    }
 
-    /* Контейнер */
-    .wrap{
+    .brand {
+      max-width: 1100px;
+      margin: 0 auto;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand__logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .15);
+    }
+
+    .brand__title {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: .2px;
+    }
+
+    .wrap {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -41,194 +67,238 @@
       padding: 0 18px 18px;
     }
 
-    /* Герой-блок */
-    .hero{
-      color:#fff; padding:28px 0; flex-shrink:0;
+    .hero {
+      color: #fff;
+      padding: 28px 0;
+      flex-shrink: 0;
     }
-    .hero h1{margin:0; font-size:28px; font-weight:800;}
-    .hero p{margin:0; color:rgba(255,255,255,.85)}
 
-    /* Панель чата */
-    .panel{
+    .hero h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255, 255, 255, .85);
+    }
+
+    .panel {
       flex: 1;
-      display:flex;
-      flex-direction:column;
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow: 0 10px 30px rgba(17,24,39,.12);
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(17, 24, 39, .12);
       overflow: hidden;
     }
 
-    /* Сообщения */
-    .chat{
+    .chat {
       flex: 1;
-      padding:20px;
-      overflow-y:auto;
-      background:#fff;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
+      padding: 20px;
+      overflow-y: auto;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .msg{display:flex; gap:10px}
-    .msg.user{justify-content:flex-end}
-    .bubble{
-      max-width:75%;
-      background:var(--bubble);
-      border:1px solid #e6e8f0;
-      color:var(--ink);
-      padding:0px 14px;
-      border-radius:14px;
-      word-wrap:break-word;
-      white-space:normal;
-    }
-    .user .bubble{background:#efeefe;border-color:#dbd8ff}
-    .bot .bubble{background:#fff}
-    .cite{font-size:12px;color:var(--sub);margin-top:6px}
 
-    /* Ввод */
-    .composer{
-      border-top:1px solid #eef0f5;
-      padding:14px;
-      background:#fafbff;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-shrink:0;
+    .msg {
+      display: flex;
+      gap: 10px;
     }
-    .box{
-      flex:1;
-      background:#fff;
-      border:1px solid #e6e8f0;
-      border-radius:999px;
-      display:flex;
-      align-items:center;
-      padding:8px 14px;
-      gap:10px;
-    }
-    .box input{
-      border:0;
-      outline:0;
-      width:100%;
-      font-size:16px;
-      padding:8px 2px;
-      background:transparent;
-    }
-    .send{
-      border:0;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      color:#fff;
-      padding:12px 18px;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:600;
-      box-shadow:0 6px 16px rgba(106,92,255,.35);
-    }
-    .send:disabled{opacity:.7;cursor:not-allowed}
 
-    @media (max-width:720px){
-      .bubble{max-width:92%}
-      .hero{padding:14px 0}
-      .wrap{padding:0 12px 12px}
+    .msg.user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 75%;
+      background: var(--bubble);
+      border: 1px solid #e6e8f0;
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 14px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    .user .bubble {
+      background: #efeefe;
+      border-color: #dbd8ff;
+    }
+
+    .bot .bubble {
+      background: #fff;
+    }
+
+    .cite {
+      font-size: 13px;
+      color: var(--sub);
+      margin-top: -6px;
+      margin-left: 8px;
+      line-height: 1.4;
+    }
+
+    .cite a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    .composer {
+      border-top: 1px solid #eef0f5;
+      padding: 14px;
+      background: #fafbff;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .box {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #e6e8f0;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 10px;
+    }
+
+    .box input {
+      border: 0;
+      outline: 0;
+      width: 100%;
+      font-size: 16px;
+      padding: 8px 2px;
+      background: transparent;
+    }
+
+    .send {
+      border: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 6px 16px rgba(106, 92, 255, .35);
+    }
+
+    .send:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 720px) {
+      .bubble {
+        max-width: 92%;
+      }
+      .hero {
+        padding: 14px 0;
+      }
+      .wrap {
+        padding: 0 12px 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand__logo"></div>
-      <div class="brand__title">RLT • Чат поддержки по закупкам</div>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <section class="hero">
-      <h1>Задайте интересующий Вас вопрос</h1>
-      <p>Система найдёт релевантные материалы в базе знаний.</p>
-    </section>
-
-    <section class="panel">
-      <div id="chat" class="chat">
-        <div class="msg bot">
-          <div class="bubble">
-            Привет! Сформулируйте вопрос — например: «Кто является заказчиком по 44-ФЗ и какие обязанности?»
-          </div>
-        </div>
-      </div>
-
-      <div class="composer">
-        <div class="box" style="flex:1">
-          <input id="q" placeholder="Например: Сроки размещения извещения по 44-ФЗ" autofocus />
-        </div>
-        <button id="send" class="send" onclick="send()">Отправить</button>
-      </div>
-    </section>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand__logo"></div>
+    <div class="brand__title">RLT • Чат поддержки по закупкам</div>
   </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>Задайте интересующий Вас вопрос</h1>
+    <p>Система найдёт релевантные материалы в базе знаний.</p>
+  </section>
+
+  <section class="panel">
+    <div id="chat" class="chat">
+      <div class="msg bot">
+        <div class="bubble">
+          Привет! Сформулируйте вопрос — например: <br>«Кто является заказчиком по 44-ФЗ и какие обязанности?»
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <div class="box">
+        <input id="q" placeholder="Например: Сроки размещения извещения по 44‑ФЗ" autofocus />
+      </div>
+      <button id="send" class="send" onclick="send()">Отправить</button>
+    </div>
+  </section>
+</div>
 
 <script>
-  // Если страница отдается тем же доменом/портом, оставь пусто — запрос пойдёт на /api/ask/ текущего origin.
-  // Если страница с другого домена/порта — поставь полный адрес, например:
-  // const API = 'http://85.143.167.10:8000';
-  const API = '';
-  const LS_KEY = 'rlt-chat-state';
+function escapeHTML(str){
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
 
-  function loadState(){ try{ return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }catch{ return {}; } }
-  function saveState(s){ localStorage.setItem(LS_KEY, JSON.stringify(s)); }
+function formatMarkdown(text){
+  return escapeHTML(text)
+    .replace(/\n/g, "<br>")
+    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+    .replace(/_(.*?)_/g, "<i>$1</i>");
+}
 
-  function addMsg(role, text, citations){
-    const box = document.getElementById('chat');
-    const row = document.createElement('div'); row.className = 'msg ' + role;
-    const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = text;
-    row.appendChild(bubble); box.appendChild(row);
+function addMsg(role, text, citations){
+  const box = document.getElementById('chat');
+  const row = document.createElement('div'); row.className = 'msg ' + role;
+  const bubble = document.createElement('div'); bubble.className = 'bubble';
+  bubble.innerHTML = formatMarkdown(text);
+  row.appendChild(bubble); box.appendChild(row);
 
-    if(Array.isArray(citations) && citations.length){
-      const cite = document.createElement('div'); cite.className='cite';
-      cite.style.whiteSpace = 'pre-line'; // чтобы \n были видны
-      cite.textContent = 'Источники:\n' + citations.map((c,i)=>`[${i+1}] ${c.title}\n    ${c.snippet}…`).join('\n\n');
-      box.appendChild(cite);
-    }
-    box.scrollTop = box.scrollHeight;
+  if(Array.isArray(citations) && citations.length){
+    const cite = document.createElement('div'); cite.className='cite';
+    cite.innerHTML = citations.map((c,i)=>
+      `<div>[${i+1}] <a href="${c.url}" target="_blank">${c.title}</a><br>${c.snippet}</div>`
+    ).join('<br>');
+    box.appendChild(cite);
   }
 
-  async function send(){
-    const input = document.getElementById('q');
-    const text = input.value.trim(); if(!text) return;
-    addMsg('user', text);
-    input.value = ''; input.focus();
+  box.scrollTop = box.scrollHeight;
+}
 
-    const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
+function getCookie(name){
+  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return m ? m.pop() : '';
+}
 
-    const state = loadState(); // { user_id, chat_id }
+async function send(){
+  const input = document.getElementById('q');
+  const text = input.value.trim(); if(!text) return;
+  addMsg('user', text);
+  input.value = ''; input.focus();
 
-    try{
-      const r = await fetch(`${API}/api/ask/`, { // <-- слэш!
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({
-          question: text,
-          user_id: state.user_id || null,
-          chat_id: state.chat_id || null
-        })
-      });
-
-      const isJson = (r.headers.get('content-type')||'').includes('application/json');
-      const j = isJson ? await r.json() : { error: `HTTP ${r.status}` };
-      if(!r.ok) throw new Error(j.error || j.errors || `HTTP ${r.status}`);
-
-      // сохраняем id для продолжения беседы в том же чате
-      if (j.ids) saveState({ user_id: j.ids.user, chat_id: j.ids.chat });
-
-      addMsg('bot', j.answer || 'Готово.', j.citations || []);
-    }catch(e){
-      addMsg('bot', 'Ошибка: ' + (e.message || 'соединения. Повторите запрос.'));
-    }finally{
-      btn.disabled = false; btn.textContent = 'Отправить';
-    }
+  const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
+  try{
+    const r = await fetch('/api/ask', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({question: text})
+    });
+    const j = await r.json();
+    addMsg('bot', j.answer || 'Готово.', j.results || []);
+  }catch(e){
+    addMsg('bot', 'Ошибка соединения. Повторите запрос.');
+  }finally{
+    btn.disabled = false; btn.textContent = 'Отправить';
   }
+}
 
-  // отправка по Enter
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); }
-  });
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); }
+});
 </script>
 </body>
 </html>
