@@ -339,7 +339,7 @@ async function send(){
       body: JSON.stringify({question: text})
     });
     const j = await r.json();
-    addMsg('bot', j.answer || 'Готово.', j.results || [], text);
+    addMsg('bot', j.answer || 'Готово.', j.citations || [], text);
   }catch(e){
     addMsg('bot', 'Ошибка соединения. Повторите запрос.');
   }finally{
