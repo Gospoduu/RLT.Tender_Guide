@@ -66,8 +66,12 @@ WSGI_APPLICATION = 'RLT_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'rlt_db',
+        'USER': 'rlt_user',
+        'PASSWORD': 'RdhgRTYU',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
