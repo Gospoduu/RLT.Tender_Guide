@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .search import build_index, search
 from django.http import JsonResponse
+from ..chat.
 from django.views.decorators.csrf import csrf_exempt
 import json
 
