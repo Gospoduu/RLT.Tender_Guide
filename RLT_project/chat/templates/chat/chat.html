@@ -192,6 +192,24 @@
       cursor: not-allowed;
     }
 
+    .fb-btn {
+      border: none;
+      background: none;
+      font-size: 18px;
+      margin: 0 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .fb-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .fb-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
     @media (max-width: 720px) {
       .bubble {
         max-width: 92%;
@@ -249,7 +267,7 @@ function formatMarkdown(text){
     .replace(/_(.*?)_/g, "<i>$1</i>");
 }
 
-function addMsg(role, text, citations){
+function addMsg(role, text, citations, questionText){
   const box = document.getElementById('chat');
   const row = document.createElement('div'); row.className = 'msg ' + role;
   const bubble = document.createElement('div'); bubble.className = 'bubble';
@@ -264,7 +282,40 @@ function addMsg(role, text, citations){
     box.appendChild(cite);
   }
 
+  if(role === 'bot'){
+    addFeedbackBlock(row, questionText, text);
+  }
+
   box.scrollTop = box.scrollHeight;
+}
+
+function addFeedbackBlock(parentElem, question, answer) {
+  const block = document.createElement('div');
+  block.className = 'cite';
+  block.innerHTML = `
+    <span>Был ли этот ответ полезен?</span>
+    <button class="fb-btn" onclick="submitFeedback(this, 'like', ${JSON.stringify(question)}, ${JSON.stringify(answer)})">👍</button>
+    <button class="fb-btn" onclick="submitFeedback(this, 'dislike', ${JSON.stringify(question)}, ${JSON.stringify(answer)})">👎</button>
+  `;
+  parentElem.appendChild(block);
+}
+
+async function submitFeedback(btn, type, question, answer){
+  const payload = { type, question, answer };
+  btn.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+  try {
+    await fetch('/api/feedback/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify(payload)
+    });
+    btn.style.fontWeight = 'bold';
+  } catch (e) {
+    console.error("Ошибка отправки фидбэка:", e);
+  }
 }
 
 function getCookie(name){
@@ -288,7 +339,7 @@ async function send(){
       body: JSON.stringify({question: text})
     });
     const j = await r.json();
-    addMsg('bot', j.answer || 'Готово.', j.results || []);
+    addMsg('bot', j.answer || 'Готово.', j.results || [], text);
   }catch(e){
     addMsg('bot', 'Ошибка соединения. Повторите запрос.');
   }finally{
@@ -302,3 +353,4 @@ document.addEventListener('keydown', (e)=>{
 </script>
 </body>
 </html>
+

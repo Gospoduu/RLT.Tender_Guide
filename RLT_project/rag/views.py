@@ -91,3 +91,29 @@ def api_ask(request):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def feedback_view(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Метод не поддерживается'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        fb_type = data.get('type')
+        question = data.get('question')
+        answer = data.get('answer')
+
+        if fb_type not in ['like', 'dislike']:
+            return JsonResponse({'error': 'Некорректный тип оценки'}, status=400)
+
+        # 🔧 Можно заменить на сохранение в БД или отправку в лог
+        with open('feedback_log.jsonl', 'a', encoding='utf-8') as f:
+            f.write(json.dumps({
+                'type': fb_type,
+                'question': question,
+                'answer': answer,
+            }, ensure_ascii=False) + '\n')
+
+        return JsonResponse({'ok': True})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
