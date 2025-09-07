@@ -53,7 +53,7 @@ def api_ask(request):
             answer = rag_pipeline(question)
 
             # 4.1) обрезаем всё до "...done thinking" включительно
-            marker = "...done thinking"
+            marker = "...done thinking."
             if marker in answer:
                 answer = answer.split(marker, 1)[1].strip()
 
