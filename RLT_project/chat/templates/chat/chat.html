@@ -191,7 +191,7 @@ async function send(){
 
   const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
   try{
-    const r = await fetch('https://85.143.167.10:8000/api/ask', {
+    const r = await fetch('http://85.143.167.10:8000/api/ask', {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
