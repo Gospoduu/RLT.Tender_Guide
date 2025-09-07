@@ -165,63 +165,70 @@
   </div>
 
 <script>
-function addMsg(role, text, citations){
-  const box = document.getElementById('chat');
-  const row = document.createElement('div'); row.className = 'msg ' + role;
-  const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = text;
-  row.appendChild(bubble); box.appendChild(row);
+  // Если страница отдается тем же доменом/портом, оставь пусто — запрос пойдёт на /api/ask/ текущего origin.
+  // Если страница с другого домена/порта — поставь полный адрес, например:
+  // const API = 'http://85.143.167.10:8000';
+  const API = '';
+  const LS_KEY = 'rlt-chat-state';
 
-  if(Array.isArray(j.citations) && j.citations.length){
-  j.citations.forEach(src => {
-    const cite = document.createElement('div'); 
-    cite.className='cite';
-    // ищем URL в строке через регулярку
-    const urlMatch = src.match(/https?:\/\/\S+/);
-    if(urlMatch){
-      const url = urlMatch[0];
-      const title = src.replace(url, '').trim() || url;
-      cite.innerHTML = `<a href="${url}" target="_blank">${title}</a>`;
-    } else {
-      cite.textContent = src;
+  function loadState(){ try{ return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }catch{ return {}; } }
+  function saveState(s){ localStorage.setItem(LS_KEY, JSON.stringify(s)); }
+
+  function addMsg(role, text, citations){
+    const box = document.getElementById('chat');
+    const row = document.createElement('div'); row.className = 'msg ' + role;
+    const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = text;
+    row.appendChild(bubble); box.appendChild(row);
+
+    if(Array.isArray(citations) && citations.length){
+      const cite = document.createElement('div'); cite.className='cite';
+      cite.style.whiteSpace = 'pre-line'; // чтобы \n были видны
+      cite.textContent = 'Источники:\n' + citations.map((c,i)=>`[${i+1}] ${c.title}\n    ${c.snippet}…`).join('\n\n');
+      box.appendChild(cite);
     }
-    box.appendChild(cite);
-  });
-}
-
-
-function getCookie(name){
-  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'); return m ? m.pop() : '';
-}
-
-async function send(){
-  const input = document.getElementById('q');
-  const text = input.value.trim(); if(!text) return;
-  addMsg('user', text);
-  input.value = ''; input.focus();
-
-  const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
-  try{
-    const r = await fetch('/api/ask/', {
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-
-      },
-      body: JSON.stringify({question: text})
-    });
-    const j = await r.json();
-    addMsg('bot', j.answer || 'Готово.', j.citations || []);
-  }catch(e){
-    addMsg('bot', 'Ошибка соединения. Повторите запрос.');
-  }finally{
-    btn.disabled = false; btn.textContent = 'Отправить';
+    box.scrollTop = box.scrollHeight;
   }
-}
 
-// отправка по Enter
-document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); }
-});
+  async function send(){
+    const input = document.getElementById('q');
+    const text = input.value.trim(); if(!text) return;
+    addMsg('user', text);
+    input.value = ''; input.focus();
+
+    const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
+
+    const state = loadState(); // { user_id, chat_id }
+
+    try{
+      const r = await fetch(`${API}/api/ask/`, { // <-- слэш!
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          question: text,
+          user_id: state.user_id || null,
+          chat_id: state.chat_id || null
+        })
+      });
+
+      const isJson = (r.headers.get('content-type')||'').includes('application/json');
+      const j = isJson ? await r.json() : { error: `HTTP ${r.status}` };
+      if(!r.ok) throw new Error(j.error || j.errors || `HTTP ${r.status}`);
+
+      // сохраняем id для продолжения беседы в том же чате
+      if (j.ids) saveState({ user_id: j.ids.user, chat_id: j.ids.chat });
+
+      addMsg('bot', j.answer || 'Готово.', j.citations || []);
+    }catch(e){
+      addMsg('bot', 'Ошибка: ' + (e.message || 'соединения. Повторите запрос.'));
+    }finally{
+      btn.disabled = false; btn.textContent = 'Отправить';
+    }
+  }
+
+  // отправка по Enter
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); send(); }
+  });
 </script>
 </body>
 </html>
