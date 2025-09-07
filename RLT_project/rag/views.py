@@ -62,18 +62,9 @@ def api_ask(request):
             if "Источник:" in answer:
                 parts = answer.split("Источник:")
                 answer_text = parts[0].strip()
-                raw_sources = parts[1].strip().split("\n")  # если каждый источник с новой строки
-                for src in raw_sources:
-                    if "||" in src:  # например "Название||https://ссылка"
-                        title, url = src.split("||", 1)
-                        sources.append({"title": title.strip(), "url": url.strip(), "snippet": ""})
-                    else:
-                        sources.append({"title": src.strip(), "url": "", "snippet": ""})
+                sources = [parts[1].strip()]
             else:
                 answer_text = answer
-
-
-            
 
             # 6) создаём сообщение от бота
             bot, _ = User.objects.get_or_create(role="llm_bot", defaults={"is_active": True})
