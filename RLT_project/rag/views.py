@@ -1,28 +1,13 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from .search import build_index, search
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 import json
+
 from chat.models import User, Message, Chat
-from chat.serializers import ChatSerializer, UserSerializer, MessageSerializer
-
-def answer_question(question: str, top_k: int = 3) -> dict:
-    """
-    Принимает вопрос, возвращает релевантные документы.
-    Позже сюда добавим генерацию ответа LLM.
-    """
-    if not question.strip():
-        return {"error": "Вопрос пустой."}
-
-    results = search(question, top_k=top_k)
-
-    return {
-        "question": question,
-        "results": results
-    }
+from chat.serializers import MessageSerializer
+from .main_rag import rag_pipeline  # твой RAG пайплайн
 
 
 @csrf_exempt
@@ -37,7 +22,6 @@ def api_ask(request):
     if not question:
         return JsonResponse({"error": "Пустой вопрос"}, status=400)
 
-    # можно передавать готовые id, если создаёшь сообщения в существующем чате/для существующего пользователя
     user_id = data.get("user_id")
     chat_id = data.get("chat_id")
 
@@ -65,18 +49,20 @@ def api_ask(request):
                 return JsonResponse({"errors": in_msg_ser.errors}, status=400)
             in_msg = in_msg_ser.save()
 
-            # 4) ищем материалы
-            results = search(question, top_k=3)
-            citations = [{
-                "title": r.get("title") or "",
-                "snippet": (r.get("text") or "")[:300],
-                "url": r.get("url") or "",
-            } for r in results]
+            # 4) получаем ответ из RAG пайплайна
+            answer = rag_pipeline(question)
 
-            # 5) создаём/находим бота и пишем ответ
+            # 5) разбираем источники
+            sources = []
+            if "Источник:" in answer:
+                parts = answer.split("Источник:")
+                answer_text = parts[0].strip()
+                sources = [parts[1].strip()]
+            else:
+                answer_text = answer
+
+            # 6) создаём сообщение от бота
             bot, _ = User.objects.get_or_create(role="llm_bot", defaults={"is_active": True})
-            answer_text = "Готово. Нашли подходящие материалы."
-
             out_msg_ser = MessageSerializer(data={
                 "chat": str(chat.id),
                 "author": str(bot.id),
@@ -89,7 +75,7 @@ def api_ask(request):
 
         return JsonResponse({
             "answer": answer_text,
-            "citations": citations,
+            "citations": sources,
             "ids": {
                 "user": str(user.id),
                 "chat": str(chat.id),
