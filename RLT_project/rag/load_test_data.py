@@ -3,7 +3,7 @@
 import json
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
-from embed_query import get_embedding  # твоя функция
+from .embed_query import get_embedding  # твоя функция
 import uuid
 
 # === Тестовые документы ===
