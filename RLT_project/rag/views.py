@@ -3,7 +3,8 @@ from .search import build_index, search
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-
+from ..chat.models import User, Message, Chat
+from ..chat.serializers import Se
 
 def answer_question(question: str, top_k: int = 3) -> dict:
     """

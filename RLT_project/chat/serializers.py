@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from .models import User, Chat, Message
 def create_auto_serializer(model_class, new_fields='__all__', read_only_fields=None):
     base_read_only = ['id', 'created_at']
     if read_only_fields:
@@ -28,3 +28,18 @@ def create_auto_serializer(model_class, new_fields='__all__', read_only_fields=N
 
     serializer_attrs['Meta'] = Meta
     return type(f'Auto{model_class.__name__}Serializer', (serializers.ModelSerializer,), serializer_attrs)
+
+UserSerializer = create_auto_serializer(
+    User,
+    new_fields=['id', 'role', 'is_active', 'created_at']  # включаем id и created_at
+)
+
+ChatSerializer = create_auto_serializer(
+    Chat,
+    new_fields=['id', 'user', 'assigned_to', 'created_at']
+)
+
+MessageSerializer = create_auto_serializer(
+    Message,
+    new_fields=['id', 'chat', 'author', 'text', 'is_read', 'created_at']
+)
