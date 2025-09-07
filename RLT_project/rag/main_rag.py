@@ -5,8 +5,8 @@ from normalize_query import normalise_query, TERMINS
 from embed_query import get_embedding  # <-- твоя функция вынесена в отдельный файл embeddings.py
 
 # === 1. Подключение к Qdrant ===
-client = QdrantClient(host="localhost", port=6333)
-collection_name = "docs"
+client = QdrantClient(url="localhost:6333")
+collection_name = "data_files"
 
 
 # === 2. Вызов локальной модели GPT-OSS:20b через Ollama ===
