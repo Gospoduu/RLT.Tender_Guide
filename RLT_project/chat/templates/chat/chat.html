@@ -171,12 +171,15 @@ function addMsg(role, text, citations){
   const bubble = document.createElement('div'); bubble.className = 'bubble'; bubble.textContent = text;
   row.appendChild(bubble); box.appendChild(row);
 
-  if(Array.isArray(citations) && citations.length){
-    const cite = document.createElement('div'); cite.className='cite';
-    cite.textContent = 'Источники:\n' + citations.map((c,i)=>`[${i+1}] ${c.title}\n    ${c.snippet}…`).join('\n\n');
-    box.appendChild(cite);
-  }
-  box.scrollTop = box.scrollHeight;
+  if(Array.isArray(j.citations)){
+  j.citations.forEach(c => {
+    if(c.url){
+      const cite = document.createElement('div');
+      cite.className = 'cite';
+      cite.innerHTML = `<a href="${c.url}" target="_blank">${c.title}</a>`;
+      box.appendChild(cite);
+    }
+  });
 }
 
 function getCookie(name){
