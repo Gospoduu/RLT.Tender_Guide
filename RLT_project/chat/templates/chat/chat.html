@@ -330,7 +330,7 @@ async function send(){
 
   const btn = document.getElementById('send'); btn.disabled = true; btn.textContent = 'Ищем…';
   try{
-    const r = await fetch('/api/ask/', {
+    const r = await fetch('/api/ask', {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
