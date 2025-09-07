@@ -1,8 +1,8 @@
 import subprocess
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
-from normalize_query import normalise_query, TERMINS
-from embed_query import get_embedding  # <-- твоя функция вынесена в отдельный файл embeddings.py
+from .normalize_query import normalise_query, TERMINS
+from .embed_query import get_embedding 
 
 # === 1. Подключение к Qdrant ===
 client = QdrantClient(url="localhost:6333")
