@@ -9,7 +9,7 @@ History: Проект написан за время хакатона. Были 
 Stack:  
 
   Backend - Python, Django REST framework  
-  Frontend - Django, HTML, CSS 
+  Frontend - Django, HTML, CSS  
   База данных – PostgreSQL 
   Векторнная база данных - Qdrant
   LLM 1 - gpt-oss:20b (open source - https://ollama.com/library/gpt-oss)
