@@ -7,12 +7,12 @@ AI-bot (with RAG) - помощник для эффективного старт�
 History: Проект написан за время хакатона. Были спаршены статьи, законы и нормативные акты предоставленные организатором, связанные с коммерческими закупками и закупками в соответствии с законом № 223-ФЗ. Json разбит на чанки и загружен в Qdrant. Сайт бота написан на Django, RAG - Python.
 
 Stack:  
-Backend - Python, Django REST framework  
-Frontend - Django, HTML, CSS  
-База данных – PostgreSQL  
-Векторная база данных - Qdrant  
-LLM 1 - gpt-oss:20b (open source - https://ollama.com/library/gpt-oss)  
-LLM 2 - ru-en-RoSBERTa (open source - https://huggingface.co/ai-forever/ru-en-RoSBERTa)  
+  Backend - Python, Django REST framework  
+  Frontend - Django, HTML, CSS  
+  База данных – PostgreSQL  
+  Векторная база данных - Qdrant  
+  LLM 1 - gpt-oss:20b (open source - https://ollama.com/library/gpt-oss)  
+  LLM 2 - ru-en-RoSBERTa (open source - https://huggingface.co/ai-forever/ru-en-RoSBERTa)  
 
 Link to app: soon...
 
