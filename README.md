@@ -8,7 +8,7 @@ History: Проект написан за время хакатона. Были 
 
 Stack:  
 
-  Backend - Python, Django REST framework
+  Backend - Python, Django REST framework  
   Frontend - Django, HTML, CSS 
   База данных – PostgreSQL 
   Векторнная база данных - Qdrant
